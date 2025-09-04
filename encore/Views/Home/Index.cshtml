@@ -1,0 +1,14 @@
+﻿@{
+    ViewData["Title"] = "ユーザー登録";
+}
+
+<h1>ユーザー登録フォーム</h1>
+
+<form asp-action="Insert" method="post">
+    <button type="submit">ユーザーを登録</button>
+</form>
+
+@if (ViewBag.Message != null)
+{
+    <p>@ViewBag.Message</p>
+}
