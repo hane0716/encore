@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "ライブ記録画面";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>ライブ記録</h1>
+
+<form asp-controller="Live" asp-action="Insert_live" method="post">
+    <label>ライブ名：</label>
+    <input type="text" name="live_name" required />
+    <button type="submit">ライブ名を登録</button>
+</form>
+
+<form asp-action="Delete_live" method="post">
+    <label>削除したいライブ名：</label>
+    <input type="text" name="del_live_name" required />
+    <button type="submit">ライブ名を削除</button>
+</form>
+
+@if (ViewBag.Message != null)
+{
+    <p>@ViewBag.Message</p>
+}
