@@ -10,6 +10,7 @@ namespace encore.Controllers
 
         public IActionResult Index()
         {
+            LoadLiveList();
             return View("Index1");
         }
 
@@ -45,6 +46,8 @@ namespace encore.Controllers
                 ViewBag.Message = "エラー: " + ex.Message;
             }
 
+            LoadLiveList();
+
             return View("Index1");
 
         }
@@ -70,10 +73,34 @@ namespace encore.Controllers
                 ViewBag.Message = "エラー: " + ex.Message;
             }
 
+            LoadLiveList();
+
             return View("Index1");
         }
 
 
+        private void LoadLiveList()
+        {
+            var ds = new System.Data.DataSet();
+
+            try
+            {
+                using var conn = new NpgsqlConnection(connString);
+                conn.Open();
+
+                StringBuilder sbSql = new StringBuilder();
+                sbSql.AppendLine(" select live_name, live_date from mst_live where delete_date is null or live_date >= current_timestamp");
+
+                using var da = new NpgsqlDataAdapter(sbSql.ToString(), conn);
+                da.Fill(ds);
+
+                ViewBag.LiveList = ds.Tables[0];
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Message = "エラー: " + ex.Message;
+            }
+        }
 
 
     }

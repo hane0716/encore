@@ -3,7 +3,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>ライブ記録</h1>
+<h1>バンド名登録</h1>
 
 <form asp-action="Insert_band" method="post">
     <label>バンド名：</label>
@@ -17,7 +17,28 @@
     <button type="submit">バンド名を削除</button>
 </form>
 
+
 @if (ViewBag.Message != null)
 {
     <p>@ViewBag.Message</p>
+}
+
+
+@if (ViewBag.BandList != null)
+{
+    <table border="1">
+        <tr>
+            <th>バンド名</th>
+        </tr>
+        @foreach (System.Data.DataRow row in ViewBag.BandList.Rows)
+        {
+            <tr>
+                <td>@row["band_name"]</td>
+            </tr>
+        }
+    </table>
+}
+else
+{
+    <p>バンド情報はまだ登録されていません。</p>
 }

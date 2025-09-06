@@ -22,3 +22,25 @@
 {
     <p>@ViewBag.Message</p>
 }
+
+
+@if (ViewBag.LiveList != null)
+{
+    <table border="1">
+        <tr>
+            <th>公演日</th>
+            <th>公演名</th>
+        </tr>
+        @foreach (System.Data.DataRow row in ViewBag.LiveList.Rows)
+        {
+            <tr>
+                <td>@Convert.ToDateTime(row["live_date"]).ToString("yyyy-MM-dd")</td>
+                <td>@row["live_name"]</td>
+            </tr>
+        }
+    </table>
+}
+else
+{
+    <p>ライブ情報はまだ登録されていません。</p>
+}
