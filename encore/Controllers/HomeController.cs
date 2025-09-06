@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
+using System.Text;
 
-namespace WebApp.Controllers
+namespace encore.Controllers
 {
     public class HomeController : Controller
     {
@@ -20,8 +21,18 @@ namespace WebApp.Controllers
                 using var conn = new NpgsqlConnection(connString);
                 conn.Open();
 
-                string sql = "insert into mst_users(name, create_date, edit_date) values (@name, date_trunc('second', current_timestamp), date_trunc('second', current_timestamp))";
-                using var cmd = new NpgsqlCommand(sql, conn);
+                StringBuilder sbsql = new StringBuilder();
+                sbsql.AppendLine("insert into mst_users(                      ");
+                sbsql.AppendLine("     name                                   ");
+                sbsql.AppendLine("   , create_date                            ");
+                sbsql.AppendLine("   , edit_date                              ");
+                sbsql.AppendLine(" ) values (                                 ");
+                sbsql.AppendLine("    @name                                   ");
+                sbsql.AppendLine("  , date_trunc('second', current_timestamp) ");
+                sbsql.AppendLine("  , date_trunc('second', current_timestamp) ");
+                sbsql.AppendLine(" )                                          ");
+
+                using var cmd = new NpgsqlCommand(sbsql.ToString(), conn);
                 cmd.Parameters.AddWithValue("@name", name);
 
                 cmd.ExecuteNonQuery();
