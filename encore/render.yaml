@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: encore-app
+    env: dotnet
+    region: oregon
+    plan: free
+    buildCommand: dotnet publish -c Release -o out
+    startCommand: dotnet out/encore.dll
+    autoDeploy: true
