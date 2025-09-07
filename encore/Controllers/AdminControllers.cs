@@ -11,7 +11,7 @@ namespace encore.Controllers
 
         public IActionResult Index()
         {
-            LoadBandList();
+            GetBandList();
             return View("Index2");
         }
 
@@ -20,7 +20,7 @@ namespace encore.Controllers
         {
             try
             {
-                GetaliveBandList(band_name);
+                GetBandList(band_name);
                 if (ViewBag.aliveBandList != null && ViewBag.aliveBandList.Rows.Count > 0)
                 {
                         ViewBag.Message = band_name + " は、既に登録されています";
@@ -35,14 +35,14 @@ namespace encore.Controllers
                 ViewBag.Message = "エラー: " + ex.Message;
             }
 
-            LoadBandList();
+            GetBandList();
 
             return View("Index2");
 
         }
 
 
-        public IActionResult Delete_band(string del_band_name)
+        public IActionResult Delete_band(string band_name)
         {
             try
             {
@@ -51,32 +51,33 @@ namespace encore.Controllers
 
                 StringBuilder sbSql= new StringBuilder();
 
-                sbSql.AppendLine(" update dat_band                                                 ");
-                sbSql.AppendLine("    set edit_date = date_trunc('second', current_timestamp)      ");
-                sbSql.AppendLine("   , yuukou_end_date = date_trunc('second', current_timestamp)   ");
-                sbSql.AppendLine("   , delete_date = date_trunc('second', current_timestamp)       ");
-                sbSql.AppendLine("  where band_name = @band_name                                   ");
+                sbSql.AppendLine(" update dat_band  set edit_date       = date_trunc('second', current_timestamp) ");
+                sbSql.AppendLine("                    , yuukou_end_date = date_trunc('second', current_timestamp) ");
+                sbSql.AppendLine("                    , delete_date     = date_trunc('second', current_timestamp) ");
+                sbSql.AppendLine("                where band_name       = @band_name                              ");
 
                 using var cmd = new NpgsqlCommand(sbSql.ToString(), conn);
-                cmd.Parameters.AddWithValue("@band_name", del_band_name);
+                cmd.Parameters.AddWithValue("@band_name", band_name);
 
                 cmd.ExecuteNonQuery();
 
-                ViewBag.Message = del_band_name + "　を削除しました。";
+                ViewBag.Message = band_name + "　を削除しました。";
             }
             catch (Exception ex)
             {
                 ViewBag.Message = "エラー: " + ex.Message;
             }
-            
-            LoadBandList();
+
+            GetBandList();
 
             return View("Index2");
         }
 
 
-
-        private void LoadBandList()
+        /// <summary>
+        /// 生きている全てのバンド名を取得
+        /// </summary>
+        private void GetBandList()
         {
             var ds = new DataSet();
 
@@ -86,7 +87,9 @@ namespace encore.Controllers
                 conn.Open();
 
                 StringBuilder sbSql = new StringBuilder();
-                sbSql.AppendLine(" select band_name from dat_band where delete_date is null");
+                sbSql.AppendLine(" select band_name           ");
+                sbSql.AppendLine("   from dat_band            ");
+                sbSql.AppendLine("  where delete_date is null ");
 
                 using var da = new NpgsqlDataAdapter(sbSql.ToString(), conn);
                 da.Fill(ds);
@@ -99,7 +102,11 @@ namespace encore.Controllers
             }
         }
 
-        private void GetaliveBandList(string band_name)
+        /// <summary>
+        /// 生きている任意のバンド名を取得
+        /// </summary>
+        /// <param name="band_name"></param>
+        private void GetBandList(string band_name)
         {
             var ds = new DataSet();
 
@@ -109,7 +116,10 @@ namespace encore.Controllers
                 conn.Open();
 
                 StringBuilder sbSql = new StringBuilder();
-                sbSql.AppendLine(" select band_name from dat_band where band_name = '" + band_name + "' and delete_date is null");
+                sbSql.AppendLine(" select band_name                       ");
+                sbSql.AppendLine("   from dat_band                        ");
+                sbSql.AppendLine("  where band_name = '" + band_name + "' ");
+                sbSql.AppendLine("    and delete_date is null             ");
 
                 using var da = new NpgsqlDataAdapter(sbSql.ToString(), conn);
                 da.Fill(ds);

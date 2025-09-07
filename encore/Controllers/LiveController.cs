@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Npgsql;
 using System.Text;
+using System.Data;
 
 namespace encore.Controllers
 {
@@ -10,7 +11,7 @@ namespace encore.Controllers
 
         public IActionResult Index()
         {
-            LoadLiveList();
+            GetLiveList();
             return View("Index1");
         }
 
@@ -46,7 +47,7 @@ namespace encore.Controllers
                 ViewBag.Message = "エラー: " + ex.Message;
             }
 
-            LoadLiveList();
+            GetLiveList();
 
             return View("Index1");
 
@@ -60,8 +61,12 @@ namespace encore.Controllers
                 using var conn = new NpgsqlConnection(connString);
                 conn.Open();
 
-                string sql = "update mst_live set edit_date = date_trunc('second', current_timestamp), delete_date = date_trunc('second', current_timestamp) where live_name = @name";
-                using var cmd = new NpgsqlCommand(sql, conn);
+                StringBuilder sbSql = new StringBuilder();
+                sbSql.AppendLine(" update mst_live set edit_date   = date_trunc('second', current_timestamp) ");
+                sbSql.AppendLine("                   , delete_date = date_trunc('second', current_timestamp) ");
+                sbSql.AppendLine("               where live_name   = @name                                     ");
+
+                using var cmd = new NpgsqlCommand(sbSql.ToString(), conn);
                 cmd.Parameters.AddWithValue("@name", del_live_name);
 
                 cmd.ExecuteNonQuery();
@@ -73,15 +78,15 @@ namespace encore.Controllers
                 ViewBag.Message = "エラー: " + ex.Message;
             }
 
-            LoadLiveList();
+            GetLiveList();
 
             return View("Index1");
         }
 
 
-        private void LoadLiveList()
+        private void GetLiveList()
         {
-            var ds = new System.Data.DataSet();
+            var ds = new DataSet();
 
             try
             {
@@ -89,7 +94,11 @@ namespace encore.Controllers
                 conn.Open();
 
                 StringBuilder sbSql = new StringBuilder();
-                sbSql.AppendLine(" select live_name, live_date from mst_live where delete_date is null or live_date >= current_timestamp");
+                sbSql.AppendLine(" select live_name                      ");
+                sbSql.AppendLine("      , live_date                      ");
+                sbSql.AppendLine("   from mst_live                       ");
+                sbSql.AppendLine("  where delete_date is null            ");
+                sbSql.AppendLine("     or live_date >= current_timestamp ");
 
                 using var da = new NpgsqlDataAdapter(sbSql.ToString(), conn);
                 da.Fill(ds);

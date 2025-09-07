@@ -54,8 +54,12 @@ namespace encore.Controllers
                 using var conn = new NpgsqlConnection(connString);
                 conn.Open();
 
-                string sql = "update mst_users set edit_date = date_trunc('second', current_timestamp), delete_date = date_trunc('second', current_timestamp) where name = @name";
-                using var cmd = new NpgsqlCommand(sql, conn);
+                StringBuilder sbSql = new StringBuilder();
+                sbSql.AppendLine(" update mst_users set edit_date   = date_trunc('second', current_timestamp) ");
+                sbSql.AppendLine("                    , delete_date = date_trunc('second', current_timestamp) ");
+                sbSql.AppendLine("                where name = @name                                          ");
+
+                using var cmd = new NpgsqlCommand(sbSql.ToString(), conn);
                 cmd.Parameters.AddWithValue("@name", delname);
 
                 cmd.ExecuteNonQuery();
