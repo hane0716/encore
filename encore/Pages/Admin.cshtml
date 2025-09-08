@@ -1,36 +1,36 @@
-﻿@{
+﻿@page
+@model encore.Pages.AdminModel
+@{
     ViewData["Title"] = "管理画面";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h1>バンド名登録</h1>
 
-<form asp-action="Insert_band" method="post">
+<form method="post" asp-page-handler="Insert_band">
     <label>バンド名：</label>
-    <input type="text" name="band_name" required />
+    <input asp-for="BandName" required />
     <button type="submit">バンド名を登録</button>
 </form>
 
-<form asp-action="Delete_band" method="post">
+<form method="post" asp-page-handler="Delete_band">
     <label>削除したいバンド名：</label>
-    <input type="text" name="del_band_name" required />
+    <input asp-for="DelBandName" required />
     <button type="submit">バンド名を削除</button>
 </form>
 
-
-@if (ViewBag.Message != null)
+@if (!string.IsNullOrEmpty(Model.Message))
 {
-    <p>@ViewBag.Message</p>
+    <p>@Model.Message</p>
 }
 
-
-@if (ViewBag.BandList != null)
+@if (Model.BandList != null && Model.BandList.Rows.Count > 0)
 {
     <table border="1">
         <tr>
             <th>バンド名</th>
         </tr>
-        @foreach (System.Data.DataRow row in ViewBag.BandList.Rows)
+        @foreach (System.Data.DataRow row in Model.BandList.Rows)
         {
             <tr>
                 <td>@row["band_name"]</td>

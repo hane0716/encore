@@ -1,37 +1,38 @@
-﻿@{
+﻿@page
+@model encore.Pages.LiveModel
+@{
     ViewData["Title"] = "ライブ記録画面";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h1>ライブ記録</h1>
 
-<form asp-controller="Live" asp-action="Insert_live" method="post">
+<form method="post" asp-page-handler="Insert_live" style="display:flex; gap:8px; align-items:center;">
     <label>ライブ名：</label>
-    <input type="text" name="live_name" required />
-    <input type="date" name="live_date" required />
+    <input asp-for="LiveName" required />
+    <input asp-for="LiveDate" type="date" required />
     <button type="submit">ライブ名を登録</button>
 </form>
 
-<form asp-action="Delete_live" method="post">
+<form method="post" asp-page-handler="Delete_live" style="display:flex; gap:8px; align-items:center; margin-top:10px;">
     <label>削除したいライブ名：</label>
-    <input type="text" name="del_live_name" required />
+    <input asp-for="DelLiveName" required />
     <button type="submit">ライブ名を削除</button>
 </form>
 
-@if (ViewBag.Message != null)
+@if (!string.IsNullOrEmpty(Model.Message))
 {
-    <p>@ViewBag.Message</p>
+    <p>@Model.Message</p>
 }
 
-
-@if (ViewBag.LiveList != null)
+@if (Model.LiveList != null && Model.LiveList.Rows.Count > 0)
 {
     <table border="1">
         <tr>
             <th>公演日</th>
             <th>公演名</th>
         </tr>
-        @foreach (System.Data.DataRow row in ViewBag.LiveList.Rows)
+        @foreach (System.Data.DataRow row in Model.LiveList.Rows)
         {
             <tr>
                 <td>@Convert.ToDateTime(row["live_date"]).ToString("yyyy-MM-dd")</td>

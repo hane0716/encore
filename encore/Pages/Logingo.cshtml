@@ -1,0 +1,11 @@
+﻿@page
+@model encore.Pages.LogingoModel
+@{
+    ViewData["Title"] = "会員画面";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@Model.WelcomeMessage</h1>
+<p>登録が完了しました。ここから会員向け機能を使えます。</p>
+
+<a asp-page="/Loginmae">← 登録画面に戻る</a>

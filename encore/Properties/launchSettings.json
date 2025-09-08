@@ -9,20 +9,22 @@
     }
   },
   "profiles": {
-    "http": {
+    "encore (https)": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
-      "applicationUrl": "http://localhost:5227",
+      "launchUrl": "Loginmae",
+      "applicationUrl": "https://localhost:7121",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "https": {
+    "encore (http)": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
-      "applicationUrl": "https://localhost:7121;http://localhost:5227",
+      "launchUrl": "Loginmae",
+      "applicationUrl": "http://localhost:5227",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -30,6 +32,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
+      "launchUrl": "Loginmae",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

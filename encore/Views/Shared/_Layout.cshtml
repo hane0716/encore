@@ -9,21 +9,25 @@
             margin: 0;
             font-family: sans-serif;
         }
+
         .container {
             display: flex;
             height: 100vh;
         }
+
         .sidebar {
             width: 200px;
             background-color: #f0f0f0;
             padding: 20px;
         }
-        .sidebar a {
-            display: block;
-            margin-bottom: 10px;
-            text-decoration: none;
-            color: #333;
-        }
+
+            .sidebar a {
+                display: block;
+                margin-bottom: 10px;
+                text-decoration: none;
+                color: #333;
+            }
+
         .main {
             flex-grow: 1;
             padding: 20px;
@@ -34,11 +38,11 @@
     <div class="container">
         <div class="sidebar">
             <h3>メニュー</h3>
-            <!-- ３行目だと、/Live/IndexというURLに変換される。LiveControllerのIndexメソッドを指定-->
-            <a asp-controller="Home" asp-action="Index">会員登録</a>
-            @* <a asp-controller="Logingo" asp-action="Index">会員画面</a> *@
-            <a asp-controller="Live" asp-action="Index">ライブ記録</a>
-            <a asp-controller="Admin" asp-action="Index">管理画面</a>
+            <!-- Razor Pages用リンク -->
+            <a asp-page="/Loginmae">会員登録</a>
+            @* <a asp-page="/Logingo">会員画面</a> *@
+            <a asp-page="/Live">ライブ記録</a>
+            <a asp-page="/Admin">管理画面</a>
         </div>
         <div class="main">
             @RenderBody()

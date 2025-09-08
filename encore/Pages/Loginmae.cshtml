@@ -1,23 +1,25 @@
-﻿@{
+﻿@page
+@model encore.Pages.LoginmaeModel
+@{
     ViewData["Title"] = "会員登録画面";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h1>会員登録</h1>
 
-<form asp-action="Insert" method="post">
+<form method="post" asp-page-handler="Insert">
     <label>なまえ：</label>
-    <input type="text" name="name" required />
+    <input type="text" asp-for="Name" required />
     <button type="submit">なまえを登録</button>
 </form>
 
-<form asp-action="Delete" method="post">
+<form method="post" asp-page-handler="Delete">
     <label>削除したいなまえ：</label>
-    <input type="text" name="delname" required />
+    <input type="text" asp-for="DelName" required />
     <button type="submit">なまえを削除</button>
 </form>
 
-@if (ViewBag.Message != null)
+@if (Model.Message != null)
 {
-    <p>@ViewBag.Message</p>
+    <p>@Model.Message</p>
 }
