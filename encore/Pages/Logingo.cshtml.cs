@@ -1,15 +1,19 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Http;
+
 
 namespace encore.Pages
 {
-    public class LogingoModel : PageModel
+    public class LogingoModel : BasePageModel
     {
         public string WelcomeMessage { get; set; }
 
         public IActionResult OnGet()
         {
-            WelcomeMessage = "ようこそ、会員画面へ！";
+            var user_name = GetUserSession("user_name");
+
+            WelcomeMessage = "ようこそ、" + user_name + "さん！";
             return Page();
         }
     }

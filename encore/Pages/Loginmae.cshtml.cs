@@ -1,11 +1,13 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Npgsql;
 using System.Text;
+using Microsoft.AspNetCore.Http;
+
 
 namespace encore.Pages
 {
-    public class LoginmaeModel : PageModel
+    public class LoginmaeModel : BasePageModel
     {
         private readonly string connString = "Host=localhost;Username=postgres;Password=encore;Database=postgres";
 
@@ -19,7 +21,8 @@ namespace encore.Pages
 
         public void OnGet() { }
 
-        public void OnPostInsert()
+
+        public IActionResult OnPostInsert()
         {
             try
             {
@@ -34,13 +37,20 @@ namespace encore.Pages
                 cmd.Parameters.AddWithValue("@name", Name);
                 cmd.ExecuteNonQuery();
 
-                Message = $"{Name}�@�łȂ܂���o�^���܂����I";
+                Message = $"{Name}　でなまえを登録しました！";
             }
             catch (Exception ex)
             {
-                Message = "�G���[: " + ex.Message;
+                Message = "エラー: " + ex.Message;
+                return Page(); // エラー時は元のページに残る
             }
+
+            SetUserSession("user_name",Name);
+            // ✅ 登録成功後に Logingo ページへリダイレクト
+            return RedirectToPage("Logingo");
         }
+
+
 
         public void OnPostDelete()
         {
@@ -57,11 +67,11 @@ namespace encore.Pages
                 cmd.Parameters.AddWithValue("@name", DelName);
                 cmd.ExecuteNonQuery();
 
-                Message = $"{DelName}�@�̂Ȃ܂����폜���܂����B";
+                Message = $"{DelName}　のなまえを削除しました。";
             }
             catch (Exception ex)
             {
-                Message = "�G���[: " + ex.Message;
+                Message = "エラー: " + ex.Message;
             }
         }
     }

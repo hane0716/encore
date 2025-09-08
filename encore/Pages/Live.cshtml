@@ -10,7 +10,7 @@
 <form method="post" asp-page-handler="Insert_live" style="display:flex; gap:8px; align-items:center;">
     <label>ライブ名：</label>
     <input asp-for="LiveName" required />
-    <input asp-for="LiveDate" type="date" required />
+    <input asp-for="LiveDate" type="date" value="@DateTime.Today.ToString("yyyy-MM-dd")" required />
     <button type="submit">ライブ名を登録</button>
 </form>
 
@@ -27,7 +27,7 @@
 
 @if (Model.LiveList != null && Model.LiveList.Rows.Count > 0)
 {
-    <table border="1">
+    <table border="1" style="margin-top:20px;">
         <tr>
             <th>公演日</th>
             <th>公演名</th>

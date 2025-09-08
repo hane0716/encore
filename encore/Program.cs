@@ -1,11 +1,12 @@
-var builder = WebApplication.CreateBuilder(args);
+ï»¿var builder = WebApplication.CreateBuilder(args);
 
-// Razor PagesƒT[ƒrƒX‚ğ’Ç‰Á
+// Razor Pagesã‚µãƒ¼ãƒ“ã‚¹ã‚’è¿½åŠ 
 builder.Services.AddRazorPages();
+builder.Services.AddSession(); // âœ… ã‚»ãƒƒã‚·ãƒ§ãƒ³æ©Ÿèƒ½ã‚’è¿½åŠ ï¼ˆBuildå‰ï¼‰
 
 var app = builder.Build();
 
-// ƒGƒ‰[ƒnƒ“ƒhƒŠƒ“ƒO‚È‚Ç
+// ã‚¨ãƒ©ãƒ¼ãƒãƒ³ãƒ‰ãƒªãƒ³ã‚°ãªã©
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
@@ -17,9 +18,10 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseSession(); // âœ… ã‚»ãƒƒã‚·ãƒ§ãƒ³ãƒŸãƒ‰ãƒ«ã‚¦ã‚§ã‚¢ã‚’æœ‰åŠ¹åŒ–
+
 app.UseAuthorization();
 
-// Razor Pagesƒ‹[ƒeƒBƒ“ƒO‚Ì‚İg—p
 app.MapRazorPages();
 
 app.Run();

@@ -14,7 +14,7 @@ namespace encore.Pages
         public string LiveName { get; set; }
 
         [BindProperty]
-        public DateOnly LiveDate { get; set; }
+        public DateTime LiveDate { get; set; }
 
         [BindProperty]
         public string DelLiveName { get; set; }
@@ -24,6 +24,7 @@ namespace encore.Pages
 
         public void OnGet()
         {
+            LiveDate = DateTime.Today;
             GetLiveList();
         }
 
@@ -35,24 +36,18 @@ namespace encore.Pages
                 conn.Open();
 
                 var sbsql = new StringBuilder();
-                sbsql.AppendLine("insert into mst_live(                       ");
-                sbsql.AppendLine("     live_name                              ");
-                sbsql.AppendLine("   , live_date                              ");
-                sbsql.AppendLine("   , create_date                            ");
-                sbsql.AppendLine("   , edit_date                              ");
-                sbsql.AppendLine(" ) values (                                 ");
-                sbsql.AppendLine("    @live_name                              ");
-                sbsql.AppendLine("  , @live_date                              ");
-                sbsql.AppendLine("  , date_trunc('second', current_timestamp) ");
-                sbsql.AppendLine("  , date_trunc('second', current_timestamp) ");
-                sbsql.AppendLine(" )                                          ");
+                sbsql.AppendLine("insert into mst_live(");
+                sbsql.AppendLine("     live_name, live_date, create_date, edit_date");
+                sbsql.AppendLine(") values (");
+                sbsql.AppendLine("    @live_name, @live_date, date_trunc('second', current_timestamp), date_trunc('second', current_timestamp)");
+                sbsql.AppendLine(")");
 
                 using var cmd = new NpgsqlCommand(sbsql.ToString(), conn);
                 cmd.Parameters.AddWithValue("@live_name", LiveName);
                 cmd.Parameters.AddWithValue("@live_date", LiveDate);
                 cmd.ExecuteNonQuery();
 
-                Message = $"{LiveDate} ŠJÃ‚Ì {LiveName} ‚ð“o˜^‚µ‚Ü‚µ‚½I";
+                Message = $"{LiveDate:yyyy-MM-dd} ŠJÃ‚Ì {LiveName} ‚ð“o˜^‚µ‚Ü‚µ‚½I";
             }
             catch (Exception ex)
             {
@@ -71,15 +66,15 @@ namespace encore.Pages
                 conn.Open();
 
                 var sbSql = new StringBuilder();
-                sbSql.AppendLine(" update mst_live set edit_date   = date_trunc('second', current_timestamp) ");
-                sbSql.AppendLine("                   , delete_date = date_trunc('second', current_timestamp) ");
-                sbSql.AppendLine("               where live_name   = @name                                   ");
+                sbSql.AppendLine("update mst_live set edit_date = date_trunc('second', current_timestamp),");
+                sbSql.AppendLine("delete_date = date_trunc('second', current_timestamp)");
+                sbSql.AppendLine("where live_name = @name");
 
                 using var cmd = new NpgsqlCommand(sbSql.ToString(), conn);
                 cmd.Parameters.AddWithValue("@name", DelLiveName);
                 cmd.ExecuteNonQuery();
 
-                Message = $"{DelLiveName} ‚Ì‚È‚Ü‚¦‚ðíœ‚µ‚Ü‚µ‚½B";
+                Message = $"{DelLiveName} ‚Ìƒ‰ƒCƒu–¼‚ðíœ‚µ‚Ü‚µ‚½B";
             }
             catch (Exception ex)
             {
@@ -97,11 +92,8 @@ namespace encore.Pages
             conn.Open();
 
             var sbSql = new StringBuilder();
-            sbSql.AppendLine(" select live_name                      ");
-            sbSql.AppendLine("      , live_date                      ");
-            sbSql.AppendLine("   from mst_live                       ");
-            sbSql.AppendLine("  where delete_date is null            ");
-            sbSql.AppendLine("     or live_date >= current_timestamp ");
+            sbSql.AppendLine("select live_name, live_date from mst_live");
+            sbSql.AppendLine("where delete_date is null or live_date >= current_timestamp");
 
             using var da = new NpgsqlDataAdapter(sbSql.ToString(), conn);
             da.Fill(ds);
