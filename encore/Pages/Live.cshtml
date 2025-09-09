@@ -1,11 +1,15 @@
 ﻿@page
 @model encore.Pages.LiveModel
 @{
-    ViewData["Title"] = "ライブ記録画面";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "_Layout";
 }
+<title>@Model.Title</title>
 
 <h1>ライブ記録</h1>
+@if (!string.IsNullOrEmpty(Model.KaiinMessage))
+{
+    <p>@Model.KaiinMessage</p>
+}
 
 <form method="post" asp-page-handler="Insert_live" style="display:flex; gap:8px; align-items:center;">
     <label>ライブ名：</label>

@@ -6,8 +6,9 @@ using System.Text;
 
 namespace encore.Pages
 {
-    public class AdminModel : PageModel
+    public class AdminModel : BasePageModel
     {
+        public string Title { get; set; } = "管理画面";
         // PostgreSQL接続文字列（ローカルDB）
         private readonly string connString = "Host=localhost;Username=postgres;Password=encore;Database=postgres";
 
@@ -20,7 +21,6 @@ namespace encore.Pages
         public string DelBandName { get; set; }
 
         // 処理結果メッセージ（登録・削除・エラーなど）
-        public string Message { get; set; }
 
         // バンド一覧表示用のデータテーブル
         public DataTable BandList { get; set; }

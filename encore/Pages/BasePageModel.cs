@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace encore.Pages
 {
@@ -19,5 +20,20 @@ namespace encore.Pages
         {
             HttpContext.Session.Remove(key);
         }
+
+        public string KaiinMessage { get; set; }
+
+        public string strUserName { get; set; }
+
+        public string KirokuName { get; set; }
+        public DateTime LiveDate { get; set; }
+
+        public string Message { get; set; }
+        public string WelcomeMessage { get; set; }
+
+        public string Name { get; set; }
+
+        public string DelName { get; set; }
+
     }
 }

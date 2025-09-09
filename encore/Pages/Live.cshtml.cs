@@ -6,8 +6,9 @@ using System.Text;
 
 namespace encore.Pages
 {
-    public class LiveModel : PageModel
+    public class LiveModel : BasePageModel
     {
+        public string Title { get; set; } = "ライブ記録画面";
         private readonly string connString = "Host=localhost;Username=postgres;Password=encore;Database=postgres";
 
         [BindProperty]
@@ -22,9 +23,21 @@ namespace encore.Pages
         public string Message { get; set; }
         public DataTable LiveList { get; set; }
 
+        public string KaiinMessage { get; set; }
+        
+        public string strUserName { get; set; }
+
+
+
         public void OnGet()
         {
             LiveDate = DateTime.Today;
+            strUserName.DefaultIfEmpty();
+            strUserName = GetUserSession("user_name");
+            if (strUserName != null)
+            {
+                KaiinMessage = strUserName + "さんのページです";
+            }
             GetLiveList();
         }
 
@@ -100,5 +113,23 @@ namespace encore.Pages
 
             LiveList = ds.Tables[0];
         }
+
+
+        private void GetUserLiveList()
+        {
+            var ds = new DataSet();
+            using var conn = new NpgsqlConnection(connString);
+            conn.Open();
+
+            var sbSql = new StringBuilder();
+            sbSql.AppendLine("select live_name, live_date from mst_live");
+            sbSql.AppendLine("where delete_date is null or live_date >= current_timestamp");
+
+            using var da = new NpgsqlDataAdapter(sbSql.ToString(), conn);
+            da.Fill(ds);
+
+            LiveList = ds.Tables[0];
+        }
+
     }
 }

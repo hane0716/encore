@@ -3,12 +3,15 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Npgsql;
 using System.Text;
 using Microsoft.AspNetCore.Http;
+using System.Data;
 
 
 namespace encore.Pages
 {
     public class LoginmaeModel : BasePageModel
     {
+        public string Title { get; set; } = "会員登録画面";
+
         private readonly string connString = "Host=localhost;Username=postgres;Password=encore;Database=postgres";
 
         [BindProperty]
@@ -17,7 +20,10 @@ namespace encore.Pages
         [BindProperty]
         public string DelName { get; set; }
 
-        public string Message { get; set; }
+        public DataTable NameList { get; set; }
+
+        public string UserId {  get; set; }
+
 
         public void OnGet() { }
 
@@ -30,7 +36,7 @@ namespace encore.Pages
                 conn.Open();
 
                 var sql = new StringBuilder();
-                sql.AppendLine("insert into mst_users(name, create_date, edit_date)");
+                sql.AppendLine("insert into mst_users(user_name, create_date, edit_date)");
                 sql.AppendLine("values (@name, date_trunc('second', current_timestamp), date_trunc('second', current_timestamp))");
 
                 using var cmd = new NpgsqlCommand(sql.ToString(), conn);
@@ -50,7 +56,61 @@ namespace encore.Pages
             return RedirectToPage("Logingo");
         }
 
+        public IActionResult OnPostLogin(string Name)
+        {
+            try
+            {
+                using var conn = new NpgsqlConnection(connString);
+                conn.Open();
+                
 
+            }
+            catch (Exception ex)
+            {
+                Message = "エラー: " + ex.Message;
+                return Page(); // エラー時は元のページに残る
+            }
+            SetUserSession("user_name", Name);
+            // ✅ 登録成功後に Logingo ページへリダイレクト
+            return RedirectToPage("Logingo");
+        }
+
+
+        public void GetUserId()
+        {
+            try
+            {
+                using var conn = new NpgsqlConnection(connString);
+                conn.Open();
+
+                var sql = new StringBuilder();
+                sql.AppendLine(" select user_id             ");
+                sql.AppendLine("   from mst_users           ");
+                sql.AppendLine("  where user_name = @name   ");
+                sql.AppendLine("    and delete_date is null ");
+
+                using var cmd = new NpgsqlCommand(sql.ToString(), conn);
+                cmd.Parameters.AddWithValue("@name", Name);
+                cmd.ExecuteNonQuery();
+
+                var result = cmd.ExecuteScalar();
+
+                if (result != null)
+                {
+                    var UserId = result.ToString();
+                    SetUserSession("User_Id", UserId);
+                }
+                else
+                {
+                    Message = "該当するユーザーが見つかりませんでした。";
+                }
+            }
+            catch (Exception ex)
+            {
+                Message = "エラー: " + ex.Message;
+            }
+
+        }
 
         public void OnPostDelete()
         {
@@ -60,8 +120,9 @@ namespace encore.Pages
                 conn.Open();
 
                 var sql = new StringBuilder();
-                sql.AppendLine("update mst_users set edit_date = date_trunc('second', current_timestamp),");
-                sql.AppendLine("delete_date = date_trunc('second', current_timestamp) where name = @name");
+                sql.AppendLine(" update mst_users set edit_date   = date_trunc('second', current_timestamp) ");
+                sql.AppendLine("                    , delete_date = date_trunc('second', current_timestamp) ");
+                sql.AppendLine("                where name = @name                                          ");
 
                 using var cmd = new NpgsqlCommand(sql.ToString(), conn);
                 cmd.Parameters.AddWithValue("@name", DelName);

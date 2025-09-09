@@ -1,0 +1,27 @@
+﻿@page
+@model encore.Pages.KirokuModel
+@{
+    Layout = "_Layout";
+}
+<title>@Model.Title</title>
+
+
+<h1>ライブを記録する</h1>
+@if (!string.IsNullOrEmpty(Model.KaiinMessage))
+{
+    <p>@Model.KaiinMessage</p>
+}
+
+
+<form method="post" asp-page-handler="Insert_Kiroku" style="display:flex; gap:8px; align-items:center;">
+    <label>ライブ名：</label>
+    <input asp-for="KirokuName" required />
+    <input asp-for="LiveDate" type="date" required />
+    <button type="submit">ライブ名を登録</button>
+</form>
+
+
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <p>@Model.Message</p>
+}

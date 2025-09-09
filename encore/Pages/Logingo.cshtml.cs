@@ -7,8 +7,7 @@ namespace encore.Pages
 {
     public class LogingoModel : BasePageModel
     {
-        public string WelcomeMessage { get; set; }
-
+        public string Title { get; set; } = "‰ïˆõ‰æ–Ê";
         public IActionResult OnGet()
         {
             var user_name = GetUserSession("user_name");
