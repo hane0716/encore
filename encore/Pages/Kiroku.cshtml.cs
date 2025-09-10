@@ -19,6 +19,7 @@ namespace encore.Pages
         public void OnGet()
         {
             strUserName = GetUserSession("user_name");
+            strUserNo = GetUserSession("user_no");
             KaiinMessage = strUserName + "さんのページです";
             LiveDate = DateTime.Today; // ← これで初期表示が今日になる
         }
@@ -28,19 +29,28 @@ namespace encore.Pages
         {
             try
             {
-                strUserName = GetUserSession("user_name");
+                strUserNo = GetUserSession("user_no");
                 using var conn = new NpgsqlConnection(connString);
                 conn.Open();
 
                 var sbsql = new StringBuilder();
-                sbsql.AppendLine("insert into mst_kiroku(");
-                sbsql.AppendLine("     user_id, live_name, live_date, create_date, edit_date");
-                sbsql.AppendLine(") values (");
-                sbsql.AppendLine("    @user_name, @live_name, @live_date, date_trunc('second', current_timestamp), date_trunc('second', current_timestamp)");
-                sbsql.AppendLine(")");
+                sbsql.AppendLine(" insert into mst_kiroku(                        ");
+                sbsql.AppendLine("        user_no                                 ");
+                sbsql.AppendLine("      , live_name                               ");
+                sbsql.AppendLine("      , live_date                               ");
+                sbsql.AppendLine("      , create_date                             ");
+                sbsql.AppendLine("      , edit_date                               ");
+                sbsql.AppendLine(" )                                              ");
+                sbsql.AppendLine(" values (                                       ");
+                sbsql.AppendLine("        @user_no                                ");
+                sbsql.AppendLine("      , @live_name                              ");
+                sbsql.AppendLine("      , @live_date                              ");
+                sbsql.AppendLine("      , date_trunc('second', current_timestamp) ");
+                sbsql.AppendLine("      , date_trunc('second', current_timestamp) ");
+                sbsql.AppendLine(" )                                              ");
 
                 using var cmd = new NpgsqlCommand(sbsql.ToString(), conn);
-                cmd.Parameters.AddWithValue("@user_name", strUserName);
+                cmd.Parameters.AddWithValue("@user_no", strUserNo);
                 cmd.Parameters.AddWithValue("@live_name", KirokuName);
                 cmd.Parameters.AddWithValue("@live_date", LiveDate);
                 cmd.ExecuteNonQuery();

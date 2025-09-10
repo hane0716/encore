@@ -27,43 +27,43 @@ namespace encore.Pages
 
         public void OnGet() { }
 
-
-        public IActionResult OnPostInsert()
+        /// <summary>
+        /// なまえを登録ボタンを押下時
+        /// </summary>
+        /// <param name="Name"></param>
+        /// <returns></returns>
+        public IActionResult OnPostInsert(string Name)
         {
             try
             {
-                using var conn = new NpgsqlConnection(connString);
-                conn.Open();
+                InsertUsers(Name);
 
-                var sql = new StringBuilder();
-                sql.AppendLine("insert into mst_users(user_name, create_date, edit_date)");
-                sql.AppendLine("values (@name, date_trunc('second', current_timestamp), date_trunc('second', current_timestamp))");
+                Message = Name + " でなまえを登録しました！";
 
-                using var cmd = new NpgsqlCommand(sql.ToString(), conn);
-                cmd.Parameters.AddWithValue("@name", Name);
-                cmd.ExecuteNonQuery();
+                var user_no = NameToNo(Name);
+                SetUserSession("user_name", Name);
+                SetUserSession("user_no", user_no);
 
-                Message = $"{Name}　でなまえを登録しました！";
+                return RedirectToPage("Logingo");
             }
             catch (Exception ex)
             {
                 Message = "エラー: " + ex.Message;
                 return Page(); // エラー時は元のページに残る
             }
-
-            SetUserSession("user_name",Name);
-            // ✅ 登録成功後に Logingo ページへリダイレクト
-            return RedirectToPage("Logingo");
         }
 
+        /// <summary>
+        /// ログインボタンを押下時
+        /// </summary>
+        /// <param name="Name"></param>
+        /// <returns></returns>
         public IActionResult OnPostLogin(string Name)
         {
             try
             {
                 using var conn = new NpgsqlConnection(connString);
                 conn.Open();
-                
-
             }
             catch (Exception ex)
             {
@@ -76,41 +76,41 @@ namespace encore.Pages
         }
 
 
-        public void GetUserId()
-        {
-            try
-            {
-                using var conn = new NpgsqlConnection(connString);
-                conn.Open();
+        //public void GetUserId()
+        //{
+        //    try
+        //    {
+        //        using var conn = new NpgsqlConnection(connString);
+        //        conn.Open();
 
-                var sql = new StringBuilder();
-                sql.AppendLine(" select user_id             ");
-                sql.AppendLine("   from mst_users           ");
-                sql.AppendLine("  where user_name = @name   ");
-                sql.AppendLine("    and delete_date is null ");
+        //        var sql = new StringBuilder();
+        //        sql.AppendLine(" select user_id             ");
+        //        sql.AppendLine("   from mst_users           ");
+        //        sql.AppendLine("  where user_name = @name   ");
+        //        sql.AppendLine("    and delete_date is null ");
 
-                using var cmd = new NpgsqlCommand(sql.ToString(), conn);
-                cmd.Parameters.AddWithValue("@name", Name);
-                cmd.ExecuteNonQuery();
+        //        using var cmd = new NpgsqlCommand(sql.ToString(), conn);
+        //        cmd.Parameters.AddWithValue("@name", Name);
+        //        cmd.ExecuteNonQuery();
 
-                var result = cmd.ExecuteScalar();
+        //        var result = cmd.ExecuteScalar();
 
-                if (result != null)
-                {
-                    var UserId = result.ToString();
-                    SetUserSession("User_Id", UserId);
-                }
-                else
-                {
-                    Message = "該当するユーザーが見つかりませんでした。";
-                }
-            }
-            catch (Exception ex)
-            {
-                Message = "エラー: " + ex.Message;
-            }
+        //        if (result != null)
+        //        {
+        //            var UserId = result.ToString();
+        //            SetUserSession("User_Id", UserId);
+        //        }
+        //        else
+        //        {
+        //            Message = "該当するユーザーが見つかりませんでした。";
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Message = "エラー: " + ex.Message;
+        //    }
 
-        }
+        //}
 
         public void OnPostDelete()
         {
@@ -120,9 +120,10 @@ namespace encore.Pages
                 conn.Open();
 
                 var sql = new StringBuilder();
-                sql.AppendLine(" update mst_users set edit_date   = date_trunc('second', current_timestamp) ");
-                sql.AppendLine("                    , delete_date = date_trunc('second', current_timestamp) ");
-                sql.AppendLine("                where name = @name                                          ");
+                sql.AppendLine(" update mst_users                                             ");
+                sql.AppendLine("    set edit_date   = date_trunc('second', current_timestamp) ");
+                sql.AppendLine("      , delete_date = date_trunc('second', current_timestamp) ");
+                sql.AppendLine("  where name = @name                                          ");
 
                 using var cmd = new NpgsqlCommand(sql.ToString(), conn);
                 cmd.Parameters.AddWithValue("@name", DelName);
@@ -135,5 +136,9 @@ namespace encore.Pages
                 Message = "エラー: " + ex.Message;
             }
         }
+
+
+
+
     }
 }

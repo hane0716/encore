@@ -1,19 +1,26 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Http;
+using Npgsql;
+using System.Data;
+using System.Text;
 
 
 namespace encore.Pages
 {
     public class LogingoModel : BasePageModel
     {
+        private readonly string connString = "Host=localhost;Username=postgres;Password=encore;Database=postgres";
+
         public string Title { get; set; } = "会員画面";
         public IActionResult OnGet()
         {
-            var user_name = GetUserSession("user_name");
+            strUserName = GetUserSession("user_name");
+            strUserNo = GetUserSession("user_no");
 
-            WelcomeMessage = "ようこそ、" + user_name + "さん！";
+            WelcomeMessage = "ようこそ、" + strUserName + "さん！";
             return Page();
         }
+
     }
 }
