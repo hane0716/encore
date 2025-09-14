@@ -26,6 +26,8 @@ namespace encore.Pages
 
         public string DelName { get; set; }
 
+        //public DataSet UserNameList {  get; set; }
+
         private readonly string connString = "Host=localhost;Username=postgres;Password=encore;Database=postgres";
 
         /// <summary>
@@ -124,7 +126,7 @@ namespace encore.Pages
             }
             catch(Exception ex) 
             {
-                Message = "エラー: " + ex.Message;
+                throw new Exception("ユーザー登録に失敗しました", ex);
             }
         }
 
@@ -150,6 +152,7 @@ namespace encore.Pages
             catch( Exception ex)
             {
                 Message = "エラー: " + ex.Message;
+
                 return ex.Message;
             }
         }
@@ -165,8 +168,8 @@ namespace encore.Pages
 
             StringBuilder sbSql = new StringBuilder();
 
-            sbSql.AppendLine(" select max(user_no) ");
-            sbSql.AppendLine("   from mst_users    ");
+            sbSql.AppendLine(" select max(cast(user_no as numeric)) ");
+            sbSql.AppendLine("   from mst_users                     ");
 
             using var cmd = new NpgsqlCommand(sbSql.ToString(), conn);
 
@@ -175,5 +178,66 @@ namespace encore.Pages
             //resultがDBNullの場合はnullを返す
             return result != DBNull.Value ? result?.ToString() : null;
         }
+
+        /// <summary>
+        /// user_noが生きていればtrueを返す
+        /// 会員情報が生きているかチェックする
+        /// </summary>
+        /// <param name="user_no"></param>
+        /// <returns></returns>
+        public bool CheckUser(string user_no)
+        {
+            try
+            {
+                var userTable = GetUserNoList(user_no);
+
+                // 行が1つ以上あれば存在する → true
+                if (userTable != null && userTable.Rows.Count > 0)
+                {
+                    return true;
+                }
+
+                // 行がなければ存在しない → false
+                return false;
+            }
+            catch (Exception ex)
+            {
+                // 例外が出たら false（ログ出力なども検討してね）
+                return false;
+            }
+        }
+
+
+
+
+        /// <summary>
+        /// 生きているユーザーnoを取得する
+        /// </summary>
+        /// <param name="user_no"></param>
+        /// <returns></returns>
+        private DataTable GetUserNoList(string user_no)
+        {
+            var ds = new DataSet();
+            using var conn = new NpgsqlConnection(connString);
+            conn.Open();
+
+            var sbSql = new StringBuilder();
+            sbSql.AppendLine(" select user_no             ");
+            sbSql.AppendLine("   from mst_users           ");
+            sbSql.AppendLine("  where user_no = @user_no  ");
+            sbSql.AppendLine("    and delete_date is null ");
+
+            using var cmd = new NpgsqlCommand(sbSql.ToString(), conn);
+            cmd.Parameters.AddWithValue("@user_no", user_no);
+
+            using var da = new NpgsqlDataAdapter(cmd);
+            da.Fill(ds);
+
+            return ds.Tables[0];
+        }
+
+
+
+
     }
 }

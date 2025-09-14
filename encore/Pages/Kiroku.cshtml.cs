@@ -14,7 +14,7 @@ namespace encore.Pages
 
         public string Title { get; set; } = "ライブ記録画面";
 
-
+        public List<(string Name, DateTime Date)> KirokuList { get; set; } = new();
 
         public void OnGet()
         {
@@ -22,6 +22,8 @@ namespace encore.Pages
             strUserNo = GetUserSession("user_no");
             KaiinMessage = strUserName + "さんのページです";
             LiveDate = DateTime.Today; // ← これで初期表示が今日になる
+
+            KirokuList = GetKirokuList(strUserNo);
         }
 
 
@@ -62,8 +64,44 @@ namespace encore.Pages
                 Message = "エラー: " + ex.Message;
             }
 
+            KirokuList = GetKirokuList(strUserNo);
             return Page();
 
+        }
+
+
+        private List<(string Name, DateTime Date)> GetKirokuList(string userNo)
+        {
+            var List = new List<(string, DateTime)>();
+            try
+            {
+                using var conn = new NpgsqlConnection(connString);
+                conn.Open();
+
+                StringBuilder sbSql = new StringBuilder();
+                sbSql.AppendLine(" select live_name, live_date ");
+                sbSql.AppendLine("   from mst_kiroku           ");
+                sbSql.AppendLine("  where user_no = @user_no   ");
+                sbSql.AppendLine("    and delete_date is null  ");
+                sbSql.AppendLine("  order by live_date desc    ");
+
+                using var cmd = new NpgsqlCommand(sbSql.ToString(), conn);
+                cmd.Parameters.AddWithValue("@user_no", userNo);
+
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    var name = reader.IsDBNull(0) ? "" : reader.GetString(0);
+                    var date = reader.IsDBNull(1) ? DateTime.MinValue : reader.GetDateTime(1);
+                    List.Add((name, date));
+                }
+            }
+            catch(Exception ex)
+            {
+                Message = "記録取得エラー" + ex.Message;
+                
+            }
+            return List;
         }
     }
 

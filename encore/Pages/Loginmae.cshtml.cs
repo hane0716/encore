@@ -24,32 +24,45 @@ namespace encore.Pages
 
         public string UserId {  get; set; }
 
+        [BindProperty]
+        public string RegisterName { get; set; }
 
-        public void OnGet() { }
+        [BindProperty]
+        public string LoginName { get; set; }
+
+
+        /// <summary>
+        /// Page_Loadの役割
+        /// </summary>
+        public void OnGet() {
+            ClearUserSession("user_name");
+            ClearUserSession("user_no");
+        }
 
         /// <summary>
         /// なまえを登録ボタンを押下時
         /// </summary>
         /// <param name="Name"></param>
         /// <returns></returns>
-        public IActionResult OnPostInsert(string Name)
+        public IActionResult OnPostInsert()
         {
             try
             {
-                InsertUsers(Name);
+                InsertUsers(RegisterName);
 
                 Message = Name + " でなまえを登録しました！";
 
-                var user_no = NameToNo(Name);
-                SetUserSession("user_name", Name);
+                var user_no = NameToNo(RegisterName);
+                SetUserSession("user_name", RegisterName);
                 SetUserSession("user_no", user_no);
 
-                return RedirectToPage("Logingo");
+                return RedirectToPage("Logingo", new {source = "register"});
             }
             catch (Exception ex)
             {
                 Message = "エラー: " + ex.Message;
-                return Page(); // エラー時は元のページに残る
+                RegisterName = ""; // 入力欄を空にする
+                return Page();
             }
         }
 
@@ -58,25 +71,35 @@ namespace encore.Pages
         /// </summary>
         /// <param name="Name"></param>
         /// <returns></returns>
-        public IActionResult OnPostLogin(string Name)
+        public IActionResult OnPostLogin()
         {
             try
             {
-                using var conn = new NpgsqlConnection(connString);
-                conn.Open();
+                string UserNo = NameToNo(LoginName);
+                if (CheckUser(UserNo)) {
+                    SetUserSession("user_no", UserNo);
+                    SetUserSession("user_name", LoginName);
+                    return RedirectToPage("Logingo", new { source = "login"});
+                }
+                else
+                {
+                    Message = "なまえ " + LoginName + " が間違っています";
+                    return Page();
+                }
             }
             catch (Exception ex)
             {
                 Message = "エラー: " + ex.Message;
-                return Page(); // エラー時は元のページに残る
+                LoginName = ""; // 入力欄を空にする
+                return Page();
             }
-            SetUserSession("user_name", Name);
-            // ✅ 登録成功後に Logingo ページへリダイレクト
-            return RedirectToPage("Logingo");
         }
 
 
-        //public void GetUserId()
+        ///// <summary>
+        ///// ユーザーネームを削除するボタンを押下時
+        ///// </summary>
+        //public void OnPostDelete()
         //{
         //    try
         //    {
@@ -84,58 +107,22 @@ namespace encore.Pages
         //        conn.Open();
 
         //        var sql = new StringBuilder();
-        //        sql.AppendLine(" select user_id             ");
-        //        sql.AppendLine("   from mst_users           ");
-        //        sql.AppendLine("  where user_name = @name   ");
-        //        sql.AppendLine("    and delete_date is null ");
+        //        sql.AppendLine(" update mst_users                                             ");
+        //        sql.AppendLine("    set edit_date   = date_trunc('second', current_timestamp) ");
+        //        sql.AppendLine("      , delete_date = date_trunc('second', current_timestamp) ");
+        //        sql.AppendLine("  where name = @name                                          ");
 
         //        using var cmd = new NpgsqlCommand(sql.ToString(), conn);
-        //        cmd.Parameters.AddWithValue("@name", Name);
+        //        cmd.Parameters.AddWithValue("@name", DelName);
         //        cmd.ExecuteNonQuery();
 
-        //        var result = cmd.ExecuteScalar();
-
-        //        if (result != null)
-        //        {
-        //            var UserId = result.ToString();
-        //            SetUserSession("User_Id", UserId);
-        //        }
-        //        else
-        //        {
-        //            Message = "該当するユーザーが見つかりませんでした。";
-        //        }
+        //        Message = $"{DelName}　のなまえを削除しました。";
         //    }
         //    catch (Exception ex)
         //    {
         //        Message = "エラー: " + ex.Message;
         //    }
-
         //}
-
-        public void OnPostDelete()
-        {
-            try
-            {
-                using var conn = new NpgsqlConnection(connString);
-                conn.Open();
-
-                var sql = new StringBuilder();
-                sql.AppendLine(" update mst_users                                             ");
-                sql.AppendLine("    set edit_date   = date_trunc('second', current_timestamp) ");
-                sql.AppendLine("      , delete_date = date_trunc('second', current_timestamp) ");
-                sql.AppendLine("  where name = @name                                          ");
-
-                using var cmd = new NpgsqlCommand(sql.ToString(), conn);
-                cmd.Parameters.AddWithValue("@name", DelName);
-                cmd.ExecuteNonQuery();
-
-                Message = $"{DelName}　のなまえを削除しました。";
-            }
-            catch (Exception ex)
-            {
-                Message = "エラー: " + ex.Message;
-            }
-        }
 
 
 

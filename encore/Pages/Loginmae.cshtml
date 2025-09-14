@@ -9,7 +9,7 @@
 
 <form method="post" asp-page-handler="Insert">
     <label>なまえ：</label>
-    <input type="text" asp-for="Name" required />
+    <input type="text" asp-for="RegisterName" required />
     <button type="submit">なまえを登録</button>
 </form>
 
@@ -24,8 +24,8 @@
 <h2>ログイン</h2>
 <form method="post" asp-page-handler="Login">
     <label>なまえ：</label>
-    <input type="text" asp-for="Name" required />
-    <button type="submit">なまえを登録</button>
+    <input type="text" asp-for="LoginName" required />
+    <button type="submit">なまえでログイン</button>
 </form>
 
 

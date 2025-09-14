@@ -5,11 +5,72 @@
 }
 <title>@Model.Title</title>
 
-<h1>@Model.WelcomeMessage</h1>
-<p>登録が完了しました。ここから会員向け機能を使えます。</p>
+<style>
+    body {
+        background-color: #121212;
+        color: #e0e0e0;
+        font-family: 'Segoe UI', sans-serif;
+    }
 
-<h3>
-<a asp-page="/Loginmae">← 登録画面に戻る</a>
-</h3>
-<a asp-page="/Kiroku">ライブを記録する</a>
+    .card {
+        max-width: 600px;
+        margin: 60px auto;
+        padding: 40px;
+        background-color: #1e1e1e;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+        text-align: center;
+    }
 
+        .card h1 {
+            color: #ffffff;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .card p {
+            font-size: 1.1em;
+            color: #cccccc;
+            margin-bottom: 30px;
+        }
+
+        .card a {
+            display: inline-block;
+            margin: 10px;
+            padding: 12px 24px;
+            background-color: #3949ab; /* 落ち着いたブルー */
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+            .card a:hover {
+                background-color: #303f9f; /* 少し濃いブルーでホバー効果 */
+            }
+
+    .back-link {
+        display: block;
+        margin-top: 20px;
+        color: #90caf9;
+        text-decoration: underline;
+        font-size: 0.95em;
+    }
+
+        .back-link:hover {
+            color: #64b5f6;
+        }
+
+
+</style>
+
+<div class="card">
+    <h1>@Model.WelcomeMessage</h1>
+    @* <p>登録が完了しました。ここから会員向け機能を使えます。</p> *@
+    <p>@Model.InfoMessage</p>
+
+    <a asp-page="/Loginmae" class="back-link">← 登録画面に戻る</a>
+    <a asp-page="/Kiroku">ライブを記録する</a>
+
+</div>
