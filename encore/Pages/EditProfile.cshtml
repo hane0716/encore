@@ -1,0 +1,22 @@
+﻿@page
+@model encore.Pages.EditProfileModel
+@{
+    Layout = "_Layout";
+}
+<title>@Model.Title</title>
+
+<form method="post">
+    <label>メールアドレス</label>
+    <input asp-for="User_mailadress" />
+    <br />
+    <label>誕生日</label>
+    <input asp-for="User_birthday" type ="date"/>
+    <br />
+    <button type ="submit">更新する</button>
+</form>
+
+<a asp-page ="Logingo">← ホーム画面に戻る</a>
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <p>@Model.Message</p>
+}

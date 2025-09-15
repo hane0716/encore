@@ -41,51 +41,12 @@
                 <tr>
                     <td>@item.Date.ToString("yyyy-MM-dd")</td>
                     <td>@item.Name</td>
-                </tr>
-               
-@*                 <tr>
-                    <td>@item.Date.ToString("yyyy-MM-dd")</td>
-                    <td>@item.Name</td>
-                    <td style="position:relative;">
-                        <button class="menu-button" onclick="toggleMenu(@item.Id)">⋯</button>
-                        <div class="menu-popup" id="menu-@item.Id" style="display:none;">
-                            <form method="get" asp-page="/EditKiroku">
-                                <input type="hidden" name="id" value="@item.Id" />
-                                <button type="submit">編集</button>
-                            </form>
-                            <button onclick="confirmDelete(@item.Id)">削除</button>
-                        </div>
+                    <td>
+                        <a asp-page="/EditKiroku" asp-route-KirokuNo="@item.No">編集</a>
                     </td>
                 </tr>
- *@
             }
         </tbody>
-@*         <script>
-            function toggleMenu(id) {
-                const menu = document.getElementById(`menu-${id}`);
-                const allMenus = document.querySelectorAll('.menu-popup');
-                allMenus.forEach(m => { if (m !== menu) m.style.display = 'none'; });
-                menu.style.display = (menu.style.display === 'none') ? 'block' : 'none';
-            }
-
-            function confirmDelete(id) {
-                if (confirm("本当に削除しますか？")) {
-                    const form = document.createElement("form");
-                    form.method = "post";
-                    form.action = "?handler=Delete_Kiroku";
-
-                    const input = document.createElement("input");
-                    input.type = "hidden";
-                    input.name = "KirokuId";
-                    input.value = id;
-
-                    form.appendChild(input);
-                    document.body.appendChild(form);
-                    form.submit();
-                }
-            }
-        </script>
- *@
     </table>
 }
 else

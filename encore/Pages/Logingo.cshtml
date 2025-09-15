@@ -22,55 +22,46 @@
         text-align: center;
     }
 
-        .card h1 {
-            color: #ffffff;
-            font-size: 2em;
-            margin-bottom: 20px;
-        }
-
-        .card p {
-            font-size: 1.1em;
-            color: #cccccc;
-            margin-bottom: 30px;
-        }
-
-        .card a {
-            display: inline-block;
-            margin: 10px;
-            padding: 12px 24px;
-            background-color: #3949ab; /* 落ち着いたブルー */
-            color: #ffffff;
-            text-decoration: none;
-            border-radius: 6px;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
-
-            .card a:hover {
-                background-color: #303f9f; /* 少し濃いブルーでホバー効果 */
-            }
-
-    .back-link {
-        display: block;
-        margin-top: 20px;
-        color: #90caf9;
-        text-decoration: underline;
-        font-size: 0.95em;
+    .card h1 {
+        color: #ffffff;
+        font-size: 2em;
+        margin-bottom: 20px;
     }
 
-        .back-link:hover {
-            color: #64b5f6;
-        }
+    .card p {
+        font-size: 1.1em;
+        color: #cccccc;
+        margin-bottom: 30px;
+    }
 
+    .card a {
+        display: inline-block;
+        margin: 10px;
+        padding: 12px 24px;
+        background-color: #3949ab; /* 落ち着いたブルー */
+        color: #ffffff;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: bold;
+        transition: background-color 0.3s;
+    }
+
+    .card a:hover {
+        background-color: #303f9f; /* 少し濃いブルーでホバー効果 */
+    }
 
 </style>
 
 <div class="card">
+    <form method="post" asp-page-handler="Logout">
+        <button type="submit" style="background-color:#3949ab; margin-left:400px; color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer;">
+            ログアウト
+        </button>
+    </form>
+
     <h1>@Model.WelcomeMessage</h1>
-    @* <p>登録が完了しました。ここから会員向け機能を使えます。</p> *@
     <p>@Model.InfoMessage</p>
 
-    <a asp-page="/Loginmae" class="back-link">← 登録画面に戻る</a>
+    <a asp-page="/EditProfile">プロフィール編集する</a>
     <a asp-page="/Kiroku">ライブを記録する</a>
-
 </div>

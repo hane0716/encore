@@ -34,7 +34,13 @@ namespace encore.Pages
                 _ => "ようこそ。会員機能をご利用いただけます。"
             };
             return Page();
+        }
 
+        public IActionResult OnPostLogout()
+        {
+            ClearUserSession("user_no");
+            ClearUserSession("user_name");
+            return RedirectToPage("Loginmae");
         }
 
     }

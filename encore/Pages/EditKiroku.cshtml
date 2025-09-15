@@ -1,0 +1,21 @@
+﻿@page
+@model encore.Pages.EditKirokuModel
+@{
+    Layout = "_Layout";
+}
+<h1>ライブ記録の編集</h1>
+
+<form method="post">
+    <label>ライブ名：</label>
+    <input asp-for="KirokuName" required />
+    <br />
+    <label>日付：</label>
+    <input asp-for="LiveDate" type="date" required />
+    <br />
+    <button type="submit">更新する</button>
+</form>
+
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <p>@Model.Message</p>
+}

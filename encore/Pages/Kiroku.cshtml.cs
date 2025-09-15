@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Npgsql;
 using System.Data;
@@ -14,7 +15,7 @@ namespace encore.Pages
 
         public string Title { get; set; } = "ƒ‰ƒCƒu‹L˜^‰æ–Ê";
 
-        public List<(string Name, DateTime Date)> KirokuList { get; set; } = new();
+        public List<(int No, string Name, DateTime Date)> KirokuList { get; set; } = new();
 
         public void OnGet()
         {
@@ -70,16 +71,16 @@ namespace encore.Pages
         }
 
 
-        private List<(string Name, DateTime Date)> GetKirokuList(string userNo)
+        private List<(int No, string Name, DateTime Date)> GetKirokuList(string userNo)
         {
-            var List = new List<(string, DateTime)>();
+            var List = new List<(int, string, DateTime)>();
             try
             {
                 using var conn = new NpgsqlConnection(connString);
                 conn.Open();
 
                 StringBuilder sbSql = new StringBuilder();
-                sbSql.AppendLine(" select live_name, live_date ");
+                sbSql.AppendLine(" select kiroku_no, live_name, live_date ");
                 sbSql.AppendLine("   from mst_kiroku           ");
                 sbSql.AppendLine("  where user_no = @user_no   ");
                 sbSql.AppendLine("    and delete_date is null  ");
@@ -91,9 +92,10 @@ namespace encore.Pages
                 using var reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    var name = reader.IsDBNull(0) ? "" : reader.GetString(0);
-                    var date = reader.IsDBNull(1) ? DateTime.MinValue : reader.GetDateTime(1);
-                    List.Add((name, date));
+                    var No = reader.GetInt32(0);
+                    var name = reader.IsDBNull(1) ? "" : reader.GetString(1);
+                    var date = reader.IsDBNull(2) ? DateTime.MinValue : reader.GetDateTime(2);
+                    List.Add((No, name, date));
                 }
             }
             catch(Exception ex)
